@@ -26,3 +26,7 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'VetagroPro Local Plugin';
+$string['vetagropromanagement'] = 'VetagroPro Management';
+$string['coursecatalogdatamanagement'] = 'Course catalog management';
+$string['enablevetagropro'] = 'Enable VetagroPro';
+$string['enablevetagropro_help'] = 'Enable functionalities for VetagroPro Installation';

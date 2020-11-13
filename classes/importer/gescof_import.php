@@ -26,7 +26,6 @@ namespace local_vetagropro\importer;
 defined('MOODLE_INTERNAL') || die();
 
 use tool_importer\importer;
-use tool_importer\transformer\standard;
 
 class gescof_import {
     /**
@@ -38,24 +37,49 @@ class gescof_import {
      */
     public static function import($csvpath) {
         $csvimporter = new gescof_csv_data_source($csvpath);
+        function capitalize($value, $columnname) {
+            return ucfirst(strtolower($value));
+        }
         function with_title($value, $columnname) {
-            $title = \html_writer::span('h3', get_string('summary:' . strtolower($columnname)));
+            $stringm = get_string_manager();
+            $titlecontent = ucfirst(strtolower($columnname));
+            if ($stringm->string_exists('summary:' . strtolower($columnname), 'local_vetagropro')) {
+                $titlecontent = get_string('summary:' . strtolower($columnname), 'local_vetagropro');
+            }
+            $title = \html_writer::tag('h3', $titlecontent);
             $content = \html_writer::span(clean_param($value, PARAM_CLEANHTML), 'summary-' . strtolower($columnname));
+            if (in_array(trim(strtolower($content)), array('', 'null'))) {
+                return '';
+            }
             return $title . $content;
         }
-
         $transformdef = array(
-            'CodeProduit' => array(array('to' => 'idnumber')),
-            'IntituleProduit' => array(array('to' => 'fullname', 'transformcallback' => 'ucwordns')),
-            'AccrocheCom' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 0])),
-            'ResumeProduit' => array(array('to' => 'summary', 'transformcallback' => 'with_title',
+            'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname')),
+            'IntituleProduit' => array(array('to' => 'fullname',
+                'transformcallback' => __NAMESPACE__ .'\capitalize')),
+            'AccrocheCom' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 0])),
+            'ResumeProduit' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
                 'concatenate' => ['order' => 1])),
-            'Objectifs' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 2])),
-            'PreRequis' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 3])),
-            'Contenu' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 4])),
-            'Evaluation' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 5])),
-            'Pedagogie' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 6])),
-            'Observations' => array(array('to' => 'summary', 'transformcallback' => 'with_title', 'concatenate' => ['order' => 7])),
+            'Objectifs' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 2])),
+            'PreRequis' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 3])),
+            'Contenu' => array(array('to' => 'summary', 'transformcallback' => '\\local_vetagropro\\with_title',
+                'concatenate' => ['order' => 4])),
+            'Evaluation' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 5])),
+            'Pedagogie' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 6])),
+            'Observations' => array(array('to' => 'summary',
+                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'concatenate' => ['order' => 7])),
             'NbHeures' => array(array('to' => 'cf_heures')),
             'NbJours' => array(array('to' => 'cf_jours')),
             'CoutTotalHT' => array(array('to' => 'cf_prix')),
@@ -66,7 +90,8 @@ class gescof_import {
             'TypePublic' => array(array('to' => 'cf_typepublic')),
             'TypeIntervenant' => array(array('to' => 'cf_typeintervenant')),
         );
-        $transformer = new standard($transformdef);
+
+        $transformer = new \tool_importer\transformer\standard($transformdef);
 
         $importer = new importer($csvimporter,
             $transformer,

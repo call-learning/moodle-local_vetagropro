@@ -18,7 +18,7 @@
  * Code to be executed after the plugin's database scheme has been installed is defined here.
  *
  * @package     local_vetagropro
- * @category    install
+ * @category    upgrade
  * @copyright   2020 CALL Learning <contact@call-learning.fr>
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -26,9 +26,11 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Custom code to be run on installing the plugin.
+ * Custom code to be run on upgrading the plugin.
  */
-function xmldb_local_vetagropro_install() {
-    \local_vetagropro\local\setup::install_update();
+function xmldb_local_vetagropro_upgrade($oldversion) {
+    if ($oldversion < 2020110905) {
+        \local_vetagropro\local\setup::install_update();
+    }
     return true;
 }
