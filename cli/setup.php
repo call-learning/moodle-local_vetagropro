@@ -23,24 +23,27 @@
  * @license     https://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_vetagropro\locallib\setup;
+
 define('CLI_SCRIPT', true);
 
-require(__DIR__.'/../../../config.php');
+require(__DIR__ . '/../../../config.php');
 global $CFG;
-require_once($CFG->libdir.'/clilib.php');
+require_once($CFG->libdir . '/clilib.php');
 
 // Get the cli options.
 list($options, $unrecognized) = cli_get_params([
     'help' => false,
     'catalogcsv' => null,
+    'fielddefs' => __DIR__ . '/files/customfields_defs.txt',
 ], [
     'h' => 'help',
-    'c' => 'catalogcsv'
+    'c' => 'catalogcsv',
+    'f' => 'fielddefs'
 ]);
 
-
 $help =
-"
+    "
 php local/vetagropro/cli/setup.php
 
 Sets up the catalogue fields and imports courses from csv file
@@ -57,8 +60,14 @@ if ($options['help']) {
 }
 
 if (!file_exists($options['catalogcsv'])) {
-    cli_error(get_string('filenotfound'). $options['catalogcsv']);
+    cli_error(get_string('filenotfound', 'error'). ' catalogcsv:' . $options['catalogcsv']);
     die();
 }
 
-\local_vetagropro\importer\gescof_import::import($options['catalogcsv']);
+if (!file_exists($options['fielddefs'])) {
+    cli_error(get_string('filenotfound', 'error') . ' fielddefs:'. $options['fielddefs']);
+    die();
+}
+
+// Reset the config to the right value.
+setup::install_update($options['fielddefs'], $options['catalogcsv']);

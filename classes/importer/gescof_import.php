@@ -41,6 +41,9 @@ class gescof_import {
             return ucfirst(strtolower($value));
         }
         function with_title($value, $columnname) {
+            if (in_array(trim(strtolower($value)), array('', 'null'))) {
+                return '';
+            }
             $stringm = get_string_manager();
             $titlecontent = ucfirst(strtolower($columnname));
             if ($stringm->string_exists('summary:' . strtolower($columnname), 'local_vetagropro')) {
@@ -48,10 +51,10 @@ class gescof_import {
             }
             $title = \html_writer::tag('h3', $titlecontent);
             $content = \html_writer::span(clean_param($value, PARAM_CLEANHTML), 'summary-' . strtolower($columnname));
-            if (in_array(trim(strtolower($content)), array('', 'null'))) {
-                return '';
-            }
             return $title . $content;
+        }
+        function round_int($value, $columnname) {
+            return strval(intval($value));
         }
         $transformdef = array(
             'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname')),
@@ -69,7 +72,7 @@ class gescof_import {
             'PreRequis' => array(array('to' => 'summary',
                 'transformcallback' => __NAMESPACE__ .'\with_title',
                 'concatenate' => ['order' => 3])),
-            'Contenu' => array(array('to' => 'summary', 'transformcallback' => '\\local_vetagropro\\with_title',
+            'Contenu' => array(array('to' => 'summary', 'transformcallback' => __NAMESPACE__ .'\with_title',
                 'concatenate' => ['order' => 4])),
             'Evaluation' => array(array('to' => 'summary',
                 'transformcallback' => __NAMESPACE__ .'\with_title',
@@ -80,13 +83,13 @@ class gescof_import {
             'Observations' => array(array('to' => 'summary',
                 'transformcallback' => __NAMESPACE__ .'\with_title',
                 'concatenate' => ['order' => 7])),
-            'NbHeures' => array(array('to' => 'cf_heures')),
-            'NbJours' => array(array('to' => 'cf_jours')),
-            'CoutTotalHT' => array(array('to' => 'cf_prix')),
+            'NbHeures' => array(array('to' => 'cf_dureeheures')),
+            'NbJours' => array(array('to' => 'cf_dureejours')),
+            'CoutTotalHT' => array(array('to' => 'cf_tarifttc', 'transformcallback' => __NAMESPACE__ .'\round_int')),
             'NiveauFormation' => array(array('to' => 'cf_niveauformation')),
-            'FamilleProduits' => array(array('to' => 'cf_theme')),
-            'EffectifMaxi' => array(array('to' => 'cf_effectifmax')),
-            'EffectifMini' => array(array('to' => 'cf_effectifmin')),
+            'FamilleProduits' => array(array('to' => 'cf_themes')),
+            'EffectifMaxi' => array(array('to' => 'cf_effectifmaxi', 'transformcallback' => __NAMESPACE__ .'\round_int')),
+            'EffectifMini' => array(array('to' => 'cf_effectifmini', 'transformcallback' => __NAMESPACE__ .'\round_int')),
             'TypePublic' => array(array('to' => 'cf_typepublic')),
             'TypeIntervenant' => array(array('to' => 'cf_typeintervenant')),
         );

@@ -21,19 +21,43 @@
  * @copyright   2020 CALL Learning <contact@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_vetagropro\local;
+namespace local_vetagropro\locallib;
 
 defined('MOODLE_INTERNAL') || die();
 
 class setup {
+    const SYLLABUS_CATEGORY_NAME = 'Champs Syllabus';
+
     /**
      * This sets up the basic parameters for this plugin.
      *
      * This function should stay idempotent in any case (several runs results in the same setup).
      */
-    public static function install_update() {
+    public static function install_update($fielddefpath = null, $catalogcsvpath=null) {
+        global $CFG;
         // Global settings for Vetagropro.
         // This assumes that dependent plugins are installed too.
+
+        // Set base course view URL (the syllabus page).
         set_config('courseviewbaseurl','/local/syllabus/view.php', 'local_resourcelibrary');
+
+        // Set the category name for syllabus fields.
+        set_config('syllabuscategoryname',self::SYLLABUS_CATEGORY_NAME, 'local_syllabus');
+
+        // Set the name of the menu for the ressource library catalog.
+        set_config('menutextoverride','Catalogue de cours|fr\nCourse Catalog|en', 'local_resourcelibrary');
+
+        // Make sure we do not activate Activity Library.
+        set_config('activateactivitylibrary',false, 'local_resourcelibrary');
+
+        if (!$fielddefpath) {
+            $fielddefpath = $CFG->dirroot.'/local/vetagropro/cli/files/customfields_defs.txt';
+        }
+        set_config('customfielddef',
+            file_get_contents($fielddefpath), 'local_syllabus');
+        \local_syllabus\locallib\utils::create_customfields_fromdef();
+        if ($catalogcsvpath) {
+            \local_vetagropro\importer\gescof_import::import($catalogcsvpath);
+        }
     }
 }

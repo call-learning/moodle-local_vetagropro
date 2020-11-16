@@ -29,6 +29,6 @@ defined('MOODLE_INTERNAL') || die();
  * Custom code to be run on installing the plugin.
  */
 function xmldb_local_vetagropro_install() {
-    \local_vetagropro\local\setup::install_update();
+    \local_vetagropro\locallib\setup::install_update();
     return true;
 }

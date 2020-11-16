@@ -30,7 +30,7 @@ defined('MOODLE_INTERNAL') || die();
  */
 function xmldb_local_vetagropro_upgrade($oldversion) {
     if ($oldversion < 2020110905) {
-        \local_vetagropro\local\setup::install_update();
+        \local_vetagropro\locallib\setup::install_update();
     }
     return true;
 }
