@@ -50,6 +50,10 @@ class setup {
         // Make sure we do not activate Activity Library.
         set_config('activateactivitylibrary',false, 'local_resourcelibrary');
 
+        // Set the catalog url for the enrol_gescof.
+        if (!get_config('enrol_gescof', 'migalurl')) {
+            set_config('migalurl', 'http://formationcontinue.vetagro-sup.fr/formation', 'enrol_gescof');
+        }
         if (!$fielddefpath) {
             $fielddefpath = $CFG->dirroot.'/local/vetagropro/cli/files/customfields_defs.txt';
         }

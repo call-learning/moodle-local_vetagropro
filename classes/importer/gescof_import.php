@@ -40,6 +40,12 @@ class gescof_import {
         function capitalize($value, $columnname) {
             return ucfirst(strtolower($value));
         }
+
+        function gescof_page_url($value, $columnname) {
+            $changespace =  preg_replace('/(\s|[-])+/', '-',$value);
+            return strtoupper($changespace) . '.html';
+        }
+
         function with_title($value, $columnname) {
             if (in_array(trim(strtolower($value)), array('', 'null'))) {
                 return '';
@@ -53,43 +59,47 @@ class gescof_import {
             $content = \html_writer::span(clean_param($value, PARAM_CLEANHTML), 'summary-' . strtolower($columnname));
             return $title . $content;
         }
+
         function round_int($value, $columnname) {
             return strval(intval($value));
         }
+
         $transformdef = array(
-            'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname')),
+            'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname'),),
             'IntituleProduit' => array(array('to' => 'fullname',
-                'transformcallback' => __NAMESPACE__ .'\capitalize')),
+                'transformcallback' => __NAMESPACE__ . '\capitalize'),
+                array('to' => 'cf_gescofpageurl', 'transformcallback' => __NAMESPACE__ . '\gescof_page_url',)
+            ),
             'AccrocheCom' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 0])),
             'ResumeProduit' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 1])),
             'Objectifs' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 2])),
             'PreRequis' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 3])),
-            'Contenu' => array(array('to' => 'summary', 'transformcallback' => __NAMESPACE__ .'\with_title',
+            'Contenu' => array(array('to' => 'summary', 'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 4])),
             'Evaluation' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 5])),
             'Pedagogie' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 6])),
             'Observations' => array(array('to' => 'summary',
-                'transformcallback' => __NAMESPACE__ .'\with_title',
+                'transformcallback' => __NAMESPACE__ . '\with_title',
                 'concatenate' => ['order' => 7])),
             'NbHeures' => array(array('to' => 'cf_dureeheures')),
             'NbJours' => array(array('to' => 'cf_dureejours')),
-            'CoutTotalHT' => array(array('to' => 'cf_tarifttc', 'transformcallback' => __NAMESPACE__ .'\round_int')),
+            'CoutTotalHT' => array(array('to' => 'cf_tarifttc', 'transformcallback' => __NAMESPACE__ . '\round_int')),
             'NiveauFormation' => array(array('to' => 'cf_niveauformation')),
             'FamilleProduits' => array(array('to' => 'cf_themes')),
-            'EffectifMaxi' => array(array('to' => 'cf_effectifmaxi', 'transformcallback' => __NAMESPACE__ .'\round_int')),
-            'EffectifMini' => array(array('to' => 'cf_effectifmini', 'transformcallback' => __NAMESPACE__ .'\round_int')),
+            'EffectifMaxi' => array(array('to' => 'cf_effectifmaxi', 'transformcallback' => __NAMESPACE__ . '\round_int')),
+            'EffectifMini' => array(array('to' => 'cf_effectifmini', 'transformcallback' => __NAMESPACE__ . '\round_int')),
             'TypePublic' => array(array('to' => 'cf_typepublic')),
             'TypeIntervenant' => array(array('to' => 'cf_typeintervenant')),
         );
@@ -98,7 +108,7 @@ class gescof_import {
 
         $importer = new importer($csvimporter,
             $transformer,
-            new importer\course_data_importer());
+            new gescof_course_data_importer());
         $importer->import();
     }
 }

@@ -25,12 +25,13 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-if ($ADMIN->fulltree) {
+if ($hassiteconfig) {
     global $CFG;
     $vetagropromanagement = new admin_category(
         'vetagropromanagement',
         get_string('vetagropromanagement', 'local_vetagropro')
     );
+
     // Data management page.
     $pagedesc = get_string('coursecatalogdatamanagement', 'local_vetagropro');
     $pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/course_catalog.php');
@@ -43,6 +44,12 @@ if ($ADMIN->fulltree) {
             empty($CFG->enablevetagropro)
         )
     );
+
+    $mainsettings = new admin_settingpage('vetagropromainsettings',
+        get_string('vetagropromainsettings', 'local_vetagropro'),
+        array('local/vetagropro:manage'),
+        empty($CFG->enablevetagropro));
+
     if (!empty($CFG->enablevetagropro)) {
         $ADMIN->add('root', $vetagropromanagement);
     }

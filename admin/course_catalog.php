@@ -26,7 +26,7 @@ require_once(__DIR__ . '../../../../config.php');
 
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir . '/adminlib.php');
-require_once('course_data_form.php');
+require_once('course_catalog_data_form.php');
 
 admin_externalpage_setup('coursecatalogdatamanagement');
 require_login();

@@ -26,7 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'local_vetagropro';
 $plugin->release = '0.1.0';
-$plugin->version = 2020110905;
+$plugin->version = 2020110909;
 $plugin->requires = 2019111805;
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->dependencies = [
