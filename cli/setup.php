@@ -43,8 +43,7 @@ list($options, $unrecognized) = cli_get_params([
 ]);
 
 $help =
-    "
-php local/vetagropro/cli/setup.php
+    "php local/vetagropro/cli/setup.php
 
 Sets up the catalogue fields and imports courses from csv file
 ";
@@ -60,12 +59,12 @@ if ($options['help']) {
 }
 
 if (!file_exists($options['catalogcsv'])) {
-    cli_error(get_string('filenotfound', 'error'). ' catalogcsv:' . $options['catalogcsv']);
+    cli_error(get_string('filenotfound', 'error') . ' catalogcsv:' . $options['catalogcsv']);
     die();
 }
 
 if (!file_exists($options['fielddefs'])) {
-    cli_error(get_string('filenotfound', 'error') . ' fielddefs:'. $options['fielddefs']);
+    cli_error(get_string('filenotfound', 'error') . ' fielddefs:' . $options['fielddefs']);
     die();
 }
 

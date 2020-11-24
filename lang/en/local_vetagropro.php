@@ -31,8 +31,8 @@ $string['catalogdataimported'] = 'Course catalog data imported!';
 $string['catalogdataimporterror'] = 'Course catalog data import error';
 $string['coursecatalogfilepath_help'] = 'Course catalog as a CSV';
 $string['coursecatalogfilepath'] = 'Course catalog file path';
-$string['coursecatalogfilepath_desc'] = 'Path in which you will drop CSV files for Gescof Catalog. Files once uploaded 
-will be deleted automatically.';
+$string['coursecatalogfilepath_desc'] = 'Path in which you will drop CSV files for Gescof Catalog. Files once uploaded
+ will be deleted automatically.';
 $string['coursecatalogfiledelimiter'] = 'Course catalog file delimiter';
 $string['coursecatalogfiledelimiter_desc'] = 'Course catalog file delimiter (can be comma or semicolon...)';
 $string['coursecatalogdirectupload'] = 'Course catalog direct upload';

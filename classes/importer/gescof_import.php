@@ -65,10 +65,10 @@ class gescof_import {
         }
 
         $transformdef = array(
-            'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname'),),
+            'CodeProduit' => array(array('to' => 'idnumber'), array('to' => 'shortname')),
             'IntituleProduit' => array(array('to' => 'fullname',
                 'transformcallback' => __NAMESPACE__ . '\capitalize'),
-                array('to' => 'cf_gescofpageurl', 'transformcallback' => __NAMESPACE__ . '\gescof_page_url',)
+                array('to' => 'cf_gescofpageurl', 'transformcallback' => __NAMESPACE__ . '\gescof_page_url')
             ),
             'AccrocheCom' => array(array('to' => 'summary',
                 'transformcallback' => __NAMESPACE__ . '\with_title',

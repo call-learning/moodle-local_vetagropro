@@ -39,7 +39,7 @@ if (!isloggedin()) {
     redirect(get_login_url());
 }
 
-$course = $DB->get_record('course', array('id'=>$id), '*', MUST_EXIST);
+$course = $DB->get_record('course', array('id' => $id), '*', MUST_EXIST);
 $context = context_course::instance($course->id, MUST_EXIST);
 
 // Everybody is enrolled on the frontpage
@@ -53,11 +53,11 @@ if (!$course->visible && !has_capability('moodle/course:viewhiddencourses', cont
 
 $PAGE->set_course($course);
 $PAGE->set_pagelayout('incourse');
-$PAGE->set_url('/enrol/index.php', array('id'=>$course->id));
+$PAGE->set_url('/enrol/index.php', array('id' => $course->id));
 
 // do not allow enrols when in login-as session
 if (\core\session\manager::is_loggedinas() and $USER->loginascontext->contextlevel == CONTEXT_COURSE) {
-    print_error('loginasnoenrol', '', $CFG->wwwroot.'/course/view.php?id='.$USER->loginascontext->instanceid);
+    print_error('loginasnoenrol', '', $CFG->wwwroot . '/course/view.php?id=' . $USER->loginascontext->instanceid);
 }
 
 // Check if user has access to the category where the course is located.
@@ -69,7 +69,7 @@ if (!core_course_category::can_view_course_info($course) && !is_enrolled($contex
 $enrols = enrol_get_plugins(true);
 $enrolinstances = enrol_get_instances($course->id, true);
 $forms = array();
-foreach($enrolinstances as $instance) {
+foreach ($enrolinstances as $instance) {
     if (!isset($enrols[$instance->enrol])) {
         continue;
     }
@@ -92,10 +92,10 @@ if (is_enrolled($context, $USER, '', true)) {
 
 $PAGE->set_title($course->shortname);
 $PAGE->set_heading($course->fullname);
-$PAGE->navbar->add(get_string('enrolmentoptions','enrol'));
+$PAGE->navbar->add(get_string('enrolmentoptions', 'enrol'));
 
 echo $OUTPUT->header();
-echo $OUTPUT->heading(get_string('enrolmentoptions','enrol'));
+echo $OUTPUT->heading(get_string('enrolmentoptions', 'enrol'));
 
 $courserenderer = $PAGE->get_renderer('core', 'course');
 
