@@ -53,21 +53,23 @@ class gescof_course_data_importer extends course_data_importer {
         if (!empty($enrol)) {
             global $DB;
             $instances = enrol_get_instances($course->id, false);
+            $existinginstance = null;
             foreach ($instances as $instance) {
                 if ($instance->enrol == self::GESCOF_ENROL_NAME) {
-                    $inst = $instance;
+                    $existinginstance = $instance;
                     break;
                 }
             }
-            $instancedata = (object) [
+            $instancedata = [
                 'customchar1' => $course->shortname,
                 'customchar2' => $course->cf_gescofpageurl
             ];
-            if ($inst === null) {
+            if ($existinginstance === null) {
                 $instid = $enrol->add_instance($course,
                     $instancedata);
             } else {
-                $enrol->update_instance($instance, $instancedata);
+
+                $enrol->update_instance($instance, (object)$instancedata);
             }
         }
     }
