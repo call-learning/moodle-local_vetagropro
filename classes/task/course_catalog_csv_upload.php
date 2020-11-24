@@ -27,14 +27,10 @@ namespace local_vetagropro\task;
 
 defined('MOODLE_INTERNAL') || die();
 
-use context_system;
-use local_competvetsuivi\userdata;
-use moodle_url;
-use core_user;
-
 /**
  * Upload course catalog
- * @package     local_competvetsuivi
+ *
+ * @package     local_vetagropro
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -47,7 +43,7 @@ class course_catalog_csv_upload extends \core\task\scheduled_task {
      * @throws \coding_exception
      */
     public function get_name() {
-        return get_string('coursecatalogcsvuploadtask', 'local_vetagropro');
+        return get_string('coursecatalogdataupload', 'local_vetagropro');
     }
 
     /**
@@ -55,8 +51,8 @@ class course_catalog_csv_upload extends \core\task\scheduled_task {
      */
     public function execute() {
         global $CFG;
-        if ($CFG->enablecompetvetsuivi) {
-            static::process_userdata_csv();
+        if ($CFG->enablevetagropro) {
+            static::process_catalog_csv();
 
         }
     }
@@ -67,14 +63,14 @@ class course_catalog_csv_upload extends \core\task\scheduled_task {
      * @throws \coding_exception
      * @throws \dml_exception
      */
-    public static function process_userdata_csv() {
-        $userdatafilepath = get_config('local_competvetsuivi', 'userdatafilepath');
-        if (is_dir($userdatafilepath)) {
+    public static function process_catalog_csv() {
+        $csvcousedatacatalog = get_config('local_vetagropro', 'coursecatalogfilepath');
+        $delimiter = get_config('local_vetagropro', 'coursecatalogfiledelimiter');
+        if (is_dir($csvcousedatacatalog)) {
             $filetoprocess = null;
-            foreach (glob("{$userdatafilepath}/*.csv") as $filename) {
-                if (userdata::check_file_valid($filename)) {
-                    $filetoprocess = $filename;
-                    $status = userdata::import_user_data_from_file($filename);
+            foreach (glob("{$csvcousedatacatalog}/*.csv") as $filename) {
+                if (file_exists($filename) && is_file($filename)) {
+                    $status = \local_vetagropro\importer\gescof_import::import($filename, $delimiter);
 
                     // Delete the file if imported successfully.
                     if ($status === true) {

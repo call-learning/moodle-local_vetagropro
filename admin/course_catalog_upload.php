@@ -22,24 +22,28 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+define('NO_OUTPUT_BUFFERING', true); // Progress bar is used here.
 require_once(__DIR__ . '../../../../config.php');
-
 global $CFG, $PAGE, $OUTPUT;
 require_once($CFG->libdir . '/adminlib.php');
-require_once('course_catalog_data_form.php');
+require_once('course_catalog_upload_form.php');
 
-admin_externalpage_setup('coursecatalogdatamanagement');
+admin_externalpage_setup('coursecatalogdataupload');
 require_login();
 
 // Override pagetype to show blocks properly.
-$header = get_string('coursecatalogdatamanagement', 'local_vetagropro');
+$header = get_string('coursecatalogdataupload', 'local_vetagropro');
 $PAGE->set_title($header);
 $PAGE->set_heading($header);
-$pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/course_catalog.php');
+$PAGE->set_cacheable(false);    // Progress bar is used here.
+$backurl  = new moodle_url('/admin/category.php', array('category' => 'vetagropromanagement'));
+$PAGE->set_button($PAGE->button
+    . $OUTPUT->single_button($backurl, get_string('vetagropromanagement', 'local_vetagropro'), 'get'));
+$pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/course_catalog_upload.php');
 
 $PAGE->set_url($pageurl);
 
-$mform = new course_catalog_data_form();
+$mform = new course_catalog_upload_form();
 
 $default = [];
 if (get_config('local_vetagropro', 'coursecatalogfilepath')) {
@@ -49,41 +53,35 @@ $message = "";
 if ($mform->is_cancelled()) {
     redirect($pageurl);
 } else if ($data = $mform->get_data()) {
-    // Set the right value for coursecatalogfilepath or/and upload the file.
-    if (file_exists($data->coursecatalogfilepath)) {
-        set_config('coursecatalogfilepath', $data->coursecatalogfilepath, 'local_vetagropro');
-        $default['coursecatalogfilepath'] = $data->coursecatalogfilepath;
-    }
     if ($mform->get_new_filename('filetoupload')) {
+        echo $OUTPUT->header();
         $tempfile = $mform->save_temp_file('filetoupload');
         $delimiter = $data->delimiter_name;
-        $status = local_competvetsuivi\userdata::import_user_data_from_file($tempfile, $delimiter);
+        require_sesskey();
+        $progressbar = new progress_bar();
+        $progressbar->create();
+        $status = \local_vetagropro\importer\gescof_import::import($tempfile, $delimiter, $progressbar);
         if ($status === true) {
             /* @var $OUTPUT core_renderer Core renderer */
-            $message = $OUTPUT->notification(get_string('catalogdataimported', 'local_vetagropro'), 'notifysuccess');
+            echo $OUTPUT->box(get_string('catalogdataimported', 'local_vetagropro'), 'notifysuccess');
         } else {
-            $errormsg = "";
-            if (key_exists('errormsg', $status)) {
-                $errormsg = $status['errormsg'];
-            }
 
-            $message = $OUTPUT->notification(get_string('importerror',
-                'local_vetagropro',
-                $errormsg),
+            echo $OUTPUT->box(get_string('catalogdataimporterror',
+                'local_vetagropro'),
                 'notifyfailure'
             );
         }
         unlink($tempfile); // Remove temp file.
+        $viewlogurl = new moodle_url('/local/vetagropro/admin/view_logs.php');
+        echo $OUTPUT->continue_button($viewlogurl, get_string('continue'), 'get');
+        echo $OUTPUT->footer();
+        die();
     }
 }
 
 $mform->set_data($default);
 
-$renderer = $PAGE->get_renderer('core');
-$renderable = new local_competvetsuivi\renderable\userdata_log();
-
 echo $OUTPUT->header();
 echo $message;
 $mform->display();
-echo $renderer->render($renderable);
 echo $OUTPUT->footer();

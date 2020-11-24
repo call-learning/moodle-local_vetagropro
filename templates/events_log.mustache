@@ -22,22 +22,22 @@
 }}
 
 <div>
-        <table class="generaltable fullwidth">
-            <thead>
+    <table class="generaltable fullwidth">
+        <thead>
+        <tr>
+            {{#columns}}
+                <th scope="col">{{.}}</th>
+            {{/columns}}
+        </tr>
+        </thead>
+        <tbody>
+        {{#userdatalog}}
             <tr>
-                {{#columns}}
-                    <th scope="col">{{#str}}{{.}}, local_vetagropro{{/str}}</th>
-                {{/columns}}
+                {{#values}}
+                    <td>{{.}}</td>
+                {{/values}}
             </tr>
-            </thead>
-            <tbody>
-            {{#userdatalog}}
-                <tr>
-                    {{#values}}
-                        <td>{{.}}</td>
-                    {{/values}}
-                </tr>
-            {{/userdatalog}}
-            </tbody>
-        </table>
+        {{/userdatalog}}
+        </tbody>
+    </table>
 </div>

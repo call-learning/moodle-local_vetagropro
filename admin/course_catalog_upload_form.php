@@ -34,10 +34,7 @@ require_once($CFG->libdir . '/csvlib.class.php');
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class course_catalog_data_form extends moodleform {
-
-    /** @var string default directory for csv upload */
-    const DEFAULT_USERDATA_DIR = '/tmp/coursecatalog/';
+class course_catalog_upload_form extends moodleform {
 
     /**
      * The form definition.
@@ -45,24 +42,16 @@ class course_catalog_data_form extends moodleform {
     public function definition() {
         $mform = $this->_form;
 
-        $mform->addElement('text',
-            'coursecatalogfilepath',
-            get_string('coursecatalogfilepath', 'local_vetagropro'));
-
-        $mform->addHelpButton('coursecatalogfilepath', 'coursecatalogfilepath', 'local_vetagropro');
-        $mform->setType('coursecatalogfilepath', PARAM_RAW);
-        $mform->setDefault('coursecatalogfilepath', static::DEFAULT_USERDATA_DIR);
-
-        $instructions = get_string('coursecatalogdirectupload', 'local_vetagropro');
-        $mform->addElement('static', '', html_writer::div($instructions));
+        $mform->addElement('header', 'instructions',
+            get_string('coursecatalogdirectupload', 'local_vetagropro'));
 
         $mform->addElement('filepicker',
             'filetoupload',
-            get_string('userdatafile', 'local_vetagropro'),
+            get_string('coursecatalogfilepath', 'local_vetagropro'),
             '',
             array('accepted_types' => array('text/csv'))); // See lib/classes/filetypes.php.
 
-        $mform->addHelpButton('filetoupload', 'userdatafile', 'local_vetagropro');
+        $mform->addHelpButton('filetoupload', 'coursecatalogfilepath', 'local_vetagropro');
         $mform->setType('filetoupload', PARAM_FILE);
 
         $choices = csv_import_reader::get_delimiter_list();
@@ -87,9 +76,6 @@ class course_catalog_data_form extends moodleform {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-        if ($data['coursecatalogfilepath'] && !file_exists($data['coursecatalogfilepath'])) {
-            $error['coursecatalogfilepath'] = get_string('directorydoesnotexist', 'local_vetagropro');
-        }
         return $errors;
     }
 }

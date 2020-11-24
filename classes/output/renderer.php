@@ -21,7 +21,7 @@
  * @copyright   2020 CALL Learning <contact@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-namespace local_competvetsuivi\output;
+namespace local_vetagropro\output;
 
 defined('MOODLE_INTERNAL') || die;
 

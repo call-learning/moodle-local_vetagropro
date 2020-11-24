@@ -26,8 +26,19 @@
 defined('MOODLE_INTERNAL') || die();
 
 $string['pluginname'] = 'VetagroPro Local Plugin';
-$string['vetagropromanagement'] = 'VetagroPro Management';
-$string['coursecatalogdatamanagement'] = 'Course catalog management';
+$string['coursecatalogdataupload'] = 'Course catalog Gescof Upload';
+$string['catalogdataimported'] = 'Course catalog data imported!';
+$string['catalogdataimporterror'] = 'Course catalog data import error';
+$string['coursecatalogfilepath_help'] = 'Course catalog as a CSV';
+$string['coursecatalogfilepath'] = 'Course catalog file path';
+$string['coursecatalogfilepath_desc'] = 'Path in which you will drop CSV files for Gescof Catalog. Files once uploaded 
+will be deleted automatically.';
+$string['coursecatalogfiledelimiter'] = 'Course catalog file delimiter';
+$string['coursecatalogfiledelimiter_desc'] = 'Course catalog file delimiter (can be comma or semicolon...)';
+$string['coursecatalogdirectupload'] = 'Course catalog direct upload';
+$string['coursecatalogdirectupload_help'] = 'Course catalog direct upload';
 $string['enablevetagropro'] = 'Enable VetagroPro';
 $string['enablevetagropro_help'] = 'Enable functionalities for VetagroPro Installation';
+$string['vetagropromanagement'] = 'VetagroPro Management';
 $string['vetagropromainsettings'] = 'Vetagropro Main Settings';
+$string['viewlogs'] = 'View logs';

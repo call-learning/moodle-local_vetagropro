@@ -35,14 +35,14 @@ class gescof_import {
      * @throws \dml_exception
      * @throws \tool_importer\importer_exception
      */
-    public static function import($csvpath) {
-        $csvimporter = new gescof_csv_data_source($csvpath);
+    public static function import($csvpath, $delimiter = 'semicolon', $progressbar = null) {
+        $csvimporter = new gescof_csv_data_source($csvpath, $delimiter);
         function capitalize($value, $columnname) {
             return ucfirst(strtolower($value));
         }
 
         function gescof_page_url($value, $columnname) {
-            $changespace =  preg_replace('/(\s|[-])+/', '-',$value);
+            $changespace = preg_replace('/(\s|[-])+/', '-', $value);
             return strtoupper($changespace) . '.html';
         }
 
@@ -106,9 +106,25 @@ class gescof_import {
 
         $transformer = new \tool_importer\transformer\standard($transformdef);
 
-        $importer = new importer($csvimporter,
-            $transformer,
-            new gescof_course_data_importer());
-        $importer->import();
+        try {
+            $importer = new importer($csvimporter,
+                $transformer,
+                new gescof_course_data_importer(),
+                $progressbar
+            );
+            $importer->import();
+            // Send an event after importation.
+            $eventparams = array('context' => \context_system::instance(),
+                'other' => array('filename' => $csvpath));
+            $event = \local_vetagropro\event\course_catalog_imported::create($eventparams);
+            $event->trigger();
+            return true;
+        } catch (\moodle_exception $e) {
+            $eventparams = array('context' => \context_system::instance(),
+                'other' => array('filename' => $csvpath, 'error' => $e->getMessage()));
+            $event = \local_vetagropro\event\course_catalog_imported::create($eventparams);
+            $event->trigger();
+            return false;
+        }
     }
 }

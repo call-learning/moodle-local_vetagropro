@@ -32,12 +32,33 @@ if ($hassiteconfig) {
         get_string('vetagropromanagement', 'local_vetagropro')
     );
 
+    $mainsettings = new admin_settingpage('vetagropromainsettings',
+        get_string('vetagropromainsettings', 'local_vetagropro'),
+        array('local/vetagropro:managesettings'),
+        empty($CFG->enablevetagropro));
+
+    $mainsettings->add(new admin_setting_configtext('local_vetagropro/coursecatalogfilepath',
+        get_string('coursecatalogfilepath', 'local_vetagropro'),
+        get_string('coursecatalogfilepath_desc', 'local_vetagropro'),
+        \local_vetagropro\locallib\setup::DEFAULT_USERDATA_DIR));
+
+    require_once($CFG->libdir . '/csvlib.class.php');
+    $choices = csv_import_reader::get_delimiter_list();
+    $mainsettings->add(new admin_setting_configselect(
+        'local_vetagropro/coursecatalogfiledelimiter',
+        get_string('coursecatalogfiledelimiter', 'local_vetagropro'),
+        get_string('coursecatalogfiledelimiter_desc', 'local_vetagropro'),
+        'semicolon',
+        $choices));
+
+    $vetagropromanagement->add('vetagropromanagement', $mainsettings);
+
     // Data management page.
-    $pagedesc = get_string('coursecatalogdatamanagement', 'local_vetagropro');
-    $pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/course_catalog.php');
+    $pagedesc = get_string('coursecatalogdataupload', 'local_vetagropro');
+    $pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/course_catalog_upload.php');
     $vetagropromanagement->add('vetagropromanagement',
         new admin_externalpage(
-            'coursecatalogdatamanagement',
+            'coursecatalogdataupload',
             $pagedesc,
             $pageurl,
             array('local/vetagropro:managesettings'),
@@ -45,10 +66,18 @@ if ($hassiteconfig) {
         )
     );
 
-    $mainsettings = new admin_settingpage('vetagropromainsettings',
-        get_string('vetagropromainsettings', 'local_vetagropro'),
-        array('local/vetagropro:manage'),
-        empty($CFG->enablevetagropro));
+    // Logs page.
+    $pagedesc = get_string('viewlogs', 'local_vetagropro');
+    $pageurl = new moodle_url($CFG->wwwroot . '/local/vetagropro/admin/view_logs.php');
+    $vetagropromanagement->add('vetagropromanagement',
+        new admin_externalpage(
+            'viewlogs',
+            $pagedesc,
+            $pageurl,
+            array('local/vetagropro:managesettings'),
+            empty($CFG->enablevetagropro)
+        )
+    );
 
     if (!empty($CFG->enablevetagropro)) {
         $ADMIN->add('root', $vetagropromanagement);

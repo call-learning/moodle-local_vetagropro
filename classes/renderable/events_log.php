@@ -22,7 +22,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_vetagropro\output;
+namespace local_vetagropro\renderable;
 defined('MOODLE_INTERNAL') || die();
 
 use renderable;
@@ -32,7 +32,7 @@ use templatable;
 /**
  * Class userdata_log
  *
- * @package local_competvetsuivi
+ * @package local_vetagropro
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
@@ -59,14 +59,19 @@ class events_log implements renderable, templatable {
         $allevents = $store->get_events_select('eventname = :eventname',
             array('eventname' => $this->eventname), 'timecreated DESC',
             0, 0);
-        $context->columns = [];
-        foreach ($allevents as $evt) {
+        $context->columns = ['timecreated'];
+        foreach (array_values($allevents) as $index => $evt) {
             $data = $evt->get_data();
-            if (!$context->columns) {
-                $context->columns = array_keys($data['others']);
-            }
             $other = $data['other'];
-            $context->userdatalog[] = array('values' => array_values($other));
+            if (!$index) {
+                $context->columns = array_merge($context->columns,
+                    array_keys($other));
+            }
+            $context->userdatalog[] = array('values' =>
+                array_merge(
+                    [userdate($data['timecreated'])], array_values($other)
+            )
+            );
         }
         return $context;
     }

@@ -26,7 +26,13 @@ namespace local_vetagropro\locallib;
 defined('MOODLE_INTERNAL') || die();
 
 class setup {
+    /**
+     * Category name for syllabus fields
+     */
     const SYLLABUS_CATEGORY_NAME = 'Champs Syllabus';
+
+    /** @var string default directory for csv upload of Gescof Exports */
+    const DEFAULT_USERDATA_DIR = '/tmp/coursecatalog/';
 
     /**
      * This sets up the basic parameters for this plugin.

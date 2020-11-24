@@ -23,7 +23,7 @@
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-namespace local_competvetsuivi\event;
+namespace local_vetagropro\event;
 
 use core\event\base;
 
@@ -33,6 +33,7 @@ defined('MOODLE_INTERNAL') || die();
  * Class course_catalog_imported
  *
  * Message sent /created when a course catalog is imported
+ *
  * @package local_vetagropro
  * @copyright   2019 CALL Learning <laurent@call-learning.fr>
  * @license     http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
@@ -64,9 +65,11 @@ class course_catalog_imported extends \core\event\base {
      */
     public function get_description() {
         $filename = s($this->other['filename']);
-        $inserted = s($this->other['created']);
-        $updated = s($this->other['updated']);
-        return "CSV User data has been imported ({$filename}), ({$updated}) modified and ({$inserted}) inserted.";
+        $error = s($this->other['error']);
+        return "CSV User data has been imported ({$filename})" . ($error ?
+                " and the following error occured: ($error)" :
+                ""
+            );
     }
 
     /**
